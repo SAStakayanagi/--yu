@@ -420,16 +420,26 @@ export default function JapaneseOrderForm() {
         const taxAmount = Math.floor(taxExcludedAmount * 0.1)
         const taxIncludedAmount = taxExcludedAmount + taxAmount
 
+        const supplierCode =
+          item.company === "アスワン"
+            ? "0001"
+            : item.company === "和光"
+              ? "0002"
+              : item.company === "キシダ化学"
+                ? "0003"
+                : "0004"
+
         orderGroups.set(orderId, {
           orderNumber: orderId,
           orderDate: "2024/12/17", // Sample date
-          supplierCode: item.company.substring(0, 3),
+          supplierCode: supplierCode,
           supplierName: item.company,
           orderAmountExcludingTax: taxExcludedAmount.toLocaleString(),
           consumptionTaxAmount: taxAmount.toLocaleString(),
           orderAmountIncludingTax: taxIncludedAmount.toLocaleString(),
           orderClassification: item.method,
           directDeliveryClassification: "直送",
+          productCode: item.makerCode,
           details: [item],
         })
       } else {
@@ -777,12 +787,6 @@ export default function JapaneseOrderForm() {
                       登録
                     </th>
                     <th
-                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      発注番号
-                    </th>
-                    <th
                       className="border border-gray-400 px-1 py-0.5 w-20 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
@@ -799,6 +803,12 @@ export default function JapaneseOrderForm() {
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
                       仕入先名
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      商品コード
                     </th>
                     <th
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
@@ -859,25 +869,25 @@ export default function JapaneseOrderForm() {
                           className="border border-gray-400 px-1 py-0.5 text-black"
                           style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
                         >
-                          {item.orderNumber}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
                           {item.orderDate}
                         </td>
                         <td
                           className="border border-gray-400 px-1 py-0.5 text-black"
                           style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
                         >
-                          {item.supplierCode}
+                          {item.supplierCode.substring(0, 4)}
                         </td>
                         <td
                           className="border border-gray-400 px-1 py-0.5 text-black"
                           style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
                         >
                           {item.supplierName}
+                        </td>
+                        <td
+                          className="border border-gray-400 px-1 py-0.5 text-black"
+                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                        >
+                          {item.productCode}
                         </td>
                         <td
                           className="border border-gray-400 px-1 py-0.5 text-right text-black"

@@ -28,6 +28,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
   const [tableData, setTableData] = useState(
     Array.from({ length: 25 }, (_, i) => ({
       // 25 items for demonstration
+      supplierCode: String((i % 4) + 1).padStart(4, "0"),
       company: `仕入先${(i % 4) + 1}`,
       method: ["FAX", "WEB", "EDI", "メール"][i % 4],
       orderCode: `メモ${i + 1}`,
@@ -58,6 +59,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
     if (searchParams.supplierCode) {
       filtered = filtered.filter(
         (item) =>
+          item.supplierCode.includes(searchParams.supplierCode) ||
           item.company.includes(searchParams.supplierCode) ||
           item.company.toLowerCase().includes(searchParams.supplierCode.toLowerCase()),
       )
@@ -146,10 +148,10 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="border border-gray-400 p-1 w-12">登録</th>
+                    <th className="border border-gray-400 p-1 w-20">仕入先コード</th>
                     <th className="border border-gray-400 p-1 w-20">仕入先名</th>
                     <th className="border border-gray-400 p-1 w-16">発注方法</th>
                     <th className="border border-gray-400 p-1 w-24">メーカー連絡メモ</th>
-                    {/* Removed "注文番号" column */}
                     <th className="border border-gray-400 p-1 w-20">得意先名</th>
                     <th className="border border-gray-400 p-1 w-16">管理コード</th>
                     <th className="border border-gray-400 p-1 w-16">メーカーコード</th>
@@ -171,10 +173,10 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                           }
                         />
                       </td>
+                      <td className="border border-gray-400 p-1">{row.supplierCode.slice(-4)}</td>
                       <td className="border border-gray-400 p-1">{row.company}</td>
                       <td className="border border-gray-400 p-1">{row.method}</td>
                       <td className="border border-gray-400 p-1">{row.orderCode}</td>
-                      {/* Removed {row.orderNumber} cell */}
                       <td className="border border-gray-400 p-1">{row.endUser}</td>
                       <td className="border border-gray-400 p-1"></td>
                       <td className="border border-gray-400 p-1">{row.makerCode}</td>
@@ -191,7 +193,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                       <td className="border border-gray-400 p-1 text-center">
                         <Checkbox />
                       </td>
-                      {[...Array(11)].map((_, cellIndex) => (
+                      {[...Array(12)].map((_, cellIndex) => (
                         <td key={cellIndex} className="border border-gray-400 p-1 h-8"></td>
                       ))}
                     </tr>

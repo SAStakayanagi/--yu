@@ -11,6 +11,7 @@ import { CalendarIcon, Search } from "lucide-react"
 import { format } from "date-fns"
 import SupplierSearchDialog from "./supplier-search-dialog"
 import ProductSearchDialog from "./product-search-dialog"
+import CustomerSearchDialog from "./customer-search-dialog"
 
 export interface OrderSearchFormHandle {
   getSearchParams: () => { [key: string]: string | boolean | undefined }
@@ -39,13 +40,18 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
     const [orderDateEnd, setOrderDateEnd] = useState<Date | undefined>(
       initialSearchParams?.orderDateEnd ? new Date(initialSearchParams.orderDateEnd as string) : new Date(),
     )
+    const [selectedCustomer, setSelectedCustomer] = useState({
+      code: "",
+      name: "",
+    })
     const [selectedSupplier, setSelectedSupplier] = useState({
       code: (initialSearchParams?.supplierCode as string) || "",
       name: (initialSearchParams?.supplierName as string) || "",
     })
     const [isSupplierDirectInputMode, setIsSupplierDirectInputMode] = useState(false)
+    const [isCustomerDirectInputMode, setIsCustomerDirectInputMode] = useState(false)
     const [isSupplierSearchOpen, setIsSupplierSearchOpen] = useState<boolean>(false)
-
+    const [isCustomerSearchOpen, setIsCustomerSearchOpen] = useState<boolean>(false)
     const [isProductSearchOpen, setIsProductSearchOpen] = useState(false)
     const [isProductDirectInputMode, setIsProductDirectInputMode] = useState(false)
     const [showDeletedOrders, setShowDeletedOrders] = useState(false)
@@ -71,6 +77,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
         if (e.key === "F11") {
           e.preventDefault()
           setIsSupplierDirectInputMode((prev) => !prev)
+          setIsCustomerDirectInputMode((prev) => !prev)
           setIsProductDirectInputMode((prev) => !prev)
         }
       }
@@ -80,11 +87,14 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
     }, [])
 
     useEffect(() => {
-      const currentMode = isSupplierDirectInputMode || isProductDirectInputMode ? "直接入力" : "ダイアログ検索"
+      const currentMode =
+        isSupplierDirectInputMode || isProductDirectInputMode || isCustomerDirectInputMode
+          ? "直接入力"
+          : "ダイアログ検索"
       if (onF11ModeChange) {
         onF11ModeChange(currentMode)
       }
-    }, [isSupplierDirectInputMode, isProductDirectInputMode, onF11ModeChange])
+    }, [isSupplierDirectInputMode, isProductDirectInputMode, isCustomerDirectInputMode, onF11ModeChange])
 
     const handleSupplierKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === "Enter" && !isSupplierDirectInputMode) {
@@ -100,10 +110,19 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
       }
     }
 
+    const handleCustomerKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !isCustomerDirectInputMode) {
+        e.preventDefault()
+        setIsCustomerSearchOpen(true)
+      }
+    }
+
     useImperativeHandle(ref, () => ({
       getSearchParams: () => ({
         orderDateStart: orderDateStart ? format(orderDateStart, "yyyy/MM/dd") : undefined,
         orderDateEnd: orderDateEnd ? format(orderDateEnd, "yyyy/MM/dd") : undefined,
+        customerCode: selectedCustomer.code,
+        customerName: selectedCustomer.name,
         supplierCode: selectedSupplier.code,
         supplierName: selectedSupplier.name,
         orderFormNo,
@@ -167,6 +186,33 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                     <Calendar mode="single" selected={orderDateEnd} onSelect={setOrderDateEnd} initialFocus />
                   </PopoverContent>
                 </Popover>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs text-gray-600">得意先</label>
+              <div className="flex gap-1">
+                <Input
+                  value={selectedCustomer.code}
+                  onChange={(e) => setSelectedCustomer({ ...selectedCustomer, code: e.target.value })}
+                  onKeyDown={handleCustomerKeyDown}
+                  className="h-8 text-xs bg-white w-20"
+                  placeholder={isCustomerDirectInputMode ? "コード" : "Enterで検索"}
+                />
+                <Input
+                  value={selectedCustomer.name}
+                  readOnly
+                  className="h-8 text-xs bg-gray-50 flex-1"
+                  placeholder="得意先名が表示されます"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0 bg-white"
+                  onClick={() => setIsCustomerSearchOpen(true)}
+                >
+                  <Search className="h-3 w-3" />
+                </Button>
               </div>
             </div>
 
@@ -290,6 +336,8 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                     const params = {
                       orderDateStart: orderDateStart ? format(orderDateStart, "yyyy/MM/dd") : undefined,
                       orderDateEnd: orderDateEnd ? format(orderDateEnd, "yyyy/MM/dd") : undefined,
+                      customerCode: selectedCustomer.code,
+                      customerName: selectedCustomer.name,
                       supplierCode: selectedSupplier.code,
                       supplierName: selectedSupplier.name,
                       orderFormNo,
@@ -311,6 +359,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                   onClick={() => {
                     setOrderDateStart(new Date())
                     setOrderDateEnd(new Date())
+                    setSelectedCustomer({ code: "", name: "" })
                     setSelectedSupplier({ code: "", name: "" })
                     setOrderFormNo("")
                     setOrderNumber("")
@@ -335,6 +384,8 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                     const params = {
                       orderDateStart: orderDateStart ? format(orderDateStart, "yyyy/MM/dd") : undefined,
                       orderDateEnd: orderDateEnd ? format(orderDateEnd, "yyyy/MM/dd") : undefined,
+                      customerCode: selectedCustomer.code,
+                      customerName: selectedCustomer.name,
                       supplierCode: selectedSupplier.code,
                       supplierName: selectedSupplier.name,
                       orderFormNo,
@@ -356,6 +407,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                   onClick={() => {
                     setOrderDateStart(new Date())
                     setOrderDateEnd(new Date())
+                    setSelectedCustomer({ code: "", name: "" })
                     setSelectedSupplier({ code: "", name: "" })
                     setOrderFormNo("")
                     setOrderNumber("")
@@ -375,6 +427,14 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
           open={isSupplierSearchOpen}
           onOpenChange={setIsSupplierSearchOpen}
           onSelect={(supplier) => setSelectedSupplier(supplier)}
+          itemsPerPage="50"
+          onItemsPerPageChange={() => {}}
+        />
+
+        <CustomerSearchDialog
+          open={isCustomerSearchOpen}
+          onOpenChange={setIsCustomerSearchOpen}
+          onSelect={(customer) => setSelectedCustomer(customer)}
           itemsPerPage="50"
           onItemsPerPageChange={() => {}}
         />
