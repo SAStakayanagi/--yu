@@ -1,6 +1,9 @@
 import Header from "@/components/header"
 import OrderedListView from "@/components/ordered-list-view"
 
+export const dynamic = "force-dynamic"
+export const dynamicParams = true
+
 interface OrderedListPageProps {
   searchParams: { [key: string]: string | string[] | undefined }
 }

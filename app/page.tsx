@@ -1,4 +1,4 @@
-import Component from "../japanese-order-form"
+import Component from "@/japanese-order-form"
 import Header from "@/components/header"
 
 export default function Page() {

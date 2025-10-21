@@ -173,7 +173,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                           }
                         />
                       </td>
-                      <td className="border border-gray-400 p-1">{row.supplierCode.slice(-4)}</td>
+                      <td className="border border-gray-400 p-1">{row.supplierCode}</td>
                       <td className="border border-gray-400 p-1">{row.company}</td>
                       <td className="border border-gray-400 p-1">{row.method}</td>
                       <td className="border border-gray-400 p-1">{row.orderCode}</td>

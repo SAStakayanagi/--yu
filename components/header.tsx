@@ -1,3 +1,5 @@
+"use client"
+
 import { Menu, User, LogOut } from "lucide-react"
 
 interface HeaderProps {
