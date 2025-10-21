@@ -26,22 +26,25 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
   // Dummy data for the table (replace with actual fetched data based on searchParams)
   // Expanded dummy data to demonstrate pagination
   const [tableData, setTableData] = useState(
-    Array.from({ length: 25 }, (_, i) => ({
-      // 25 items for demonstration
-      supplierCode: String((i % 4) + 1).padStart(4, "0"),
-      company: `仕入先${(i % 4) + 1}`,
-      method: ["FAX", "WEB", "EDI", "メール"][i % 4],
-      orderCode: `メモ${i + 1}`,
-      orderNumber: `T01-000${i + 1}`,
-      endUser: `得意先${(i % 3) + 1}`,
-      makerCode: `M-${(i % 5) + 1}`,
-      productName: `商品名${i + 1}`,
-      specification: `規格${i + 1}`,
-      model: `モデル${i + 1}`,
-      quantity: `${(i % 3) + 1}台`,
-      orderQty: `${(i % 5) + 1}`,
-      unitPrice: `${(i + 1) * 1000}`,
-    })),
+    Array.from({ length: 25 }, (_, i) => {
+      const supplierNum = (i % 4) + 1
+      const supplierCode = supplierNum.toString().padStart(4, "0")
+      return {
+        supplierCode: supplierCode,
+        company: `仕入先${supplierNum}`,
+        method: ["FAX", "WEB", "EDI", "メール"][i % 4],
+        orderCode: `メモ${i + 1}`,
+        orderNumber: `T01-000${i + 1}`,
+        endUser: `得意先${(i % 3) + 1}`,
+        makerCode: `M-${(i % 5) + 1}`,
+        productName: `商品名${i + 1}`,
+        specification: `規格${i + 1}`,
+        model: `モデル${i + 1}`,
+        quantity: `${(i % 3) + 1}台`,
+        orderQty: `${(i % 5) + 1}`,
+        unitPrice: `${(i + 1) * 1000}`,
+      }
+    }),
   )
 
   const [filteredData, setFilteredData] = useState(tableData)
