@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import OrderSearchForm from "@/components/order-search-form"
 import Footer from "@/components/footer"
 import DetailEditDialog from "@/components/detail-edit-dialog"
@@ -32,12 +33,6 @@ export default function JapaneseOrderForm() {
   const [isInventorySecuringDialogOpen, setIsInventorySecuringDialogOpen] = useState(false)
 
   const [tableData, setTableData] = useState<any[]>([])
-
-  const selectedItemsData = useMemo(() => {
-    return selectedItems
-      .map((orderNumber) => filteredData.find((item) => item.orderNumber === orderNumber))
-      .filter(Boolean)
-  }, [selectedItems, filteredData])
 
   const headerData = useMemo(() => {
     // Group line items by order number to create header records
@@ -114,297 +109,6 @@ export default function JapaneseOrderForm() {
         orderQty: "10",
         unitPrice: "10,000",
         lotNumber: "L004",
-        expirationDate: undefined,
-      },
-      {
-        company: "アスワン",
-        method: "JD(EDI)",
-        orderCode: "ロット指定：112",
-        staffCode: "005",
-        orderFormNo: "000005",
-        orderNumber: "",
-        endUser: "●●大学",
-        makerCode: "63-6334-36-30",
-        productName: "分析天びん 320g",
-        specification: "ML304T/00",
-        model: "ML304T/00",
-        quantity: "1台",
-        orderQty: "2",
-        unitPrice: "800,000",
-        lotNumber: "L005",
-        expirationDate: undefined,
-      },
-      {
-        company: "アスワン",
-        method: "JD(EDI)",
-        orderCode: "特注品",
-        staffCode: "006",
-        orderFormNo: "000006",
-        orderNumber: "",
-        endUser: "△△研究所",
-        makerCode: "12-3456-78-90",
-        productName: "pHメーター",
-        specification: "PH-200",
-        model: "PH-200",
-        quantity: "1個",
-        orderQty: "1",
-        unitPrice: "50,000",
-        lotNumber: "L006",
-        expirationDate: undefined,
-      },
-      {
-        company: "和光",
-        method: "JD(EDI)",
-        orderCode: "緊急発注",
-        staffCode: "007",
-        orderFormNo: "000007",
-        orderNumber: "",
-        endUser: "□□病院",
-        makerCode: "98-7654-32-10",
-        productName: "遠心分離機",
-        specification: "CEN-1000",
-        model: "CEN-1000",
-        quantity: "1台",
-        orderQty: "1",
-        unitPrice: "1,200,000",
-        lotNumber: "L007",
-        expirationDate: undefined,
-      },
-      {
-        company: "キシダ化学",
-        method: "JD(EDI)",
-        orderCode: "定期購入",
-        staffCode: "008",
-        orderFormNo: "000008",
-        orderNumber: "",
-        endUser: "☆☆製薬",
-        makerCode: "45-6789-01-23",
-        productName: "試薬A",
-        specification: "GR-100",
-        model: "GR-100",
-        quantity: "500g/瓶",
-        orderQty: "10",
-        unitPrice: "10,000",
-        lotNumber: "L008",
-        expirationDate: undefined,
-      },
-      // ここからWG(EDI)のデータ
-      {
-        company: "アスワン",
-        method: "WG(EDI)",
-        orderCode: "ロット指定：113",
-        staffCode: "009",
-        orderFormNo: "000009",
-        orderNumber: "",
-        endUser: "●●大学",
-        makerCode: "63-6334-36-30",
-        productName: "分析天びん 320g",
-        specification: "ML304T/00",
-        model: "ML304T/00",
-        quantity: "1台",
-        orderQty: "2",
-        unitPrice: "800,000",
-        lotNumber: "L009",
-        expirationDate: undefined,
-      },
-      {
-        company: "アスワン",
-        method: "WG(EDI)",
-        orderCode: "特注品",
-        staffCode: "010",
-        orderFormNo: "000010",
-        orderNumber: "",
-        endUser: "△△研究所",
-        makerCode: "12-3456-78-90",
-        productName: "pHメーター",
-        specification: "PH-200",
-        model: "PH-200",
-        quantity: "1個",
-        orderQty: "1",
-        unitPrice: "50,000",
-        lotNumber: "L010",
-        expirationDate: undefined,
-      },
-      {
-        company: "和光",
-        method: "WG(EDI)",
-        orderCode: "緊急発注",
-        staffCode: "011",
-        orderFormNo: "000011",
-        orderNumber: "",
-        endUser: "□□病院",
-        makerCode: "98-7654-32-10",
-        productName: "遠心分離機",
-        specification: "CEN-1000",
-        model: "CEN-1000",
-        quantity: "1台",
-        orderQty: "1",
-        unitPrice: "1,200,000",
-        lotNumber: "L011",
-        expirationDate: undefined,
-      },
-      {
-        company: "キシダ化学",
-        method: "WG(EDI)",
-        orderCode: "定期購入",
-        staffCode: "012",
-        orderFormNo: "000012",
-        orderNumber: "",
-        endUser: "☆☆製薬",
-        makerCode: "45-6789-01-23",
-        productName: "試薬A",
-        specification: "GR-100",
-        model: "GR-100",
-        quantity: "500g/瓶",
-        orderQty: "10",
-        unitPrice: "10,000",
-        lotNumber: "L012",
-        expirationDate: undefined,
-      },
-      // ここからメールのデータ
-      {
-        company: "アスワン",
-        method: "メール",
-        orderCode: "ロット指定：114",
-        staffCode: "013",
-        orderFormNo: "000013",
-        orderNumber: "",
-        endUser: "●●大学",
-        makerCode: "63-6334-36-30",
-        productName: "分析天びん 320g",
-        specification: "ML304T/00",
-        model: "ML304T/00",
-        quantity: "1台",
-        orderQty: "2",
-        unitPrice: "800,000",
-        lotNumber: "L013",
-        expirationDate: undefined,
-      },
-      {
-        company: "アスワン",
-        method: "メール",
-        orderCode: "特注品",
-        staffCode: "014",
-        orderFormNo: "000014",
-        orderNumber: "",
-        endUser: "△△研究所",
-        makerCode: "12-3456-78-90",
-        productName: "pHメーター",
-        specification: "PH-200",
-        model: "PH-200",
-        quantity: "1個",
-        orderQty: "1",
-        unitPrice: "50,000",
-        lotNumber: "L014",
-        expirationDate: undefined,
-      },
-      {
-        company: "和光",
-        method: "メール",
-        orderCode: "緊急発注",
-        staffCode: "015",
-        orderFormNo: "000015",
-        orderNumber: "",
-        endUser: "□□病院",
-        makerCode: "98-7654-32-10",
-        productName: "遠心分離機",
-        specification: "CEN-1000",
-        model: "CEN-1000",
-        quantity: "1台",
-        orderQty: "1",
-        unitPrice: "1,200,000",
-        lotNumber: "L015",
-        expirationDate: undefined,
-      },
-      {
-        company: "キシダ化学",
-        method: "メール",
-        orderCode: "定期購入",
-        staffCode: "016",
-        orderFormNo: "000016",
-        orderNumber: "",
-        endUser: "☆☆製薬",
-        makerCode: "45-6789-01-23",
-        productName: "試薬A",
-        specification: "GR-100",
-        model: "GR-100",
-        quantity: "500g/瓶",
-        orderQty: "10",
-        unitPrice: "10,000",
-        lotNumber: "L016",
-        expirationDate: undefined,
-      },
-      // ここからWEBのデータ
-      {
-        company: "アスワン",
-        method: "WEB",
-        orderCode: "ロット指定：115",
-        staffCode: "017",
-        orderFormNo: "000017",
-        orderNumber: "",
-        endUser: "●●大学",
-        makerCode: "63-6334-36-30",
-        productName: "分析天びん 320g",
-        specification: "ML304T/00",
-        model: "ML304T/00",
-        quantity: "1台",
-        orderQty: "2",
-        unitPrice: "800,000",
-        lotNumber: "L017",
-        expirationDate: undefined,
-      },
-      {
-        company: "アスワン",
-        method: "WEB",
-        orderCode: "特注品",
-        staffCode: "018",
-        orderFormNo: "000018",
-        orderNumber: "",
-        endUser: "△△研究所",
-        makerCode: "12-3456-78-90",
-        productName: "pHメーター",
-        specification: "PH-200",
-        model: "PH-200",
-        quantity: "1個",
-        orderQty: "1",
-        unitPrice: "50,000",
-        lotNumber: "L018",
-        expirationDate: undefined,
-      },
-      {
-        company: "和光",
-        method: "WEB",
-        orderCode: "緊急発注",
-        staffCode: "019",
-        orderFormNo: "000019",
-        orderNumber: "",
-        endUser: "□□病院",
-        makerCode: "98-7654-32-10",
-        productName: "遠心分離機",
-        specification: "CEN-1000",
-        model: "CEN-1000",
-        quantity: "1台",
-        orderQty: "1",
-        unitPrice: "1,200,000",
-        lotNumber: "L019",
-        expirationDate: undefined,
-      },
-      {
-        company: "キシダ化学",
-        method: "WEB",
-        orderCode: "定期購入",
-        staffCode: "020",
-        orderFormNo: "000020",
-        orderNumber: "",
-        endUser: "☆☆製薬",
-        makerCode: "45-6789-01-23",
-        productName: "試薬A",
-        specification: "GR-100",
-        model: "GR-100",
-        quantity: "500g/瓶",
-        orderQty: "10",
-        unitPrice: "10,000",
-        lotNumber: "L020",
         expirationDate: undefined,
       },
     ].map((item) => ({
@@ -739,6 +443,16 @@ export default function JapaneseOrderForm() {
     setFilteredData(updatedTableData)
   }
 
+  const handleMemoChange = (orderNumber: string, detailIndex: number, value: string) => {
+    const updatedTableData = [...tableData]
+    const orderIndex = updatedTableData.findIndex((item) => item.orderNumber === orderNumber)
+    if (orderIndex !== -1 && updatedTableData[orderIndex].details[detailIndex]) {
+      updatedTableData[orderIndex].details[detailIndex].orderCode = value
+      setTableData(updatedTableData)
+      setFilteredData(updatedTableData)
+    }
+  }
+
   return (
     <div className="flex flex-col flex-grow pb-20" style={{ backgroundColor: "#FAF5E9" }}>
       <Card className="w-full flex-grow">
@@ -840,105 +554,305 @@ export default function JapaneseOrderForm() {
                     >
                       直送区分
                     </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      受注番号
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      受注行番号
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      得意先名
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      商品コード
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-32 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      商品名
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      数量
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      仕入金額
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      発行区分
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      発注書メモ欄
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: "#FAF5E9" }}>
                   {currentItems.map((item, index) => {
                     const isSelected = selectedItems.includes(item.orderNumber)
                     const isDeleted = deletedOrders.has(item.orderNumber)
-                    return (
-                      <tr
-                        key={item.orderNumber}
-                        className={`cursor-pointer hover:bg-gray-100 ${isSelected ? "bg-blue-100" : ""} ${
-                          isDeleted ? "opacity-50" : ""
-                        }`}
-                        style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        onClick={() => handleRowClick(item.orderNumber)}
-                      >
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-center text-black"
+                    const details = item.details && item.details.length > 0 ? item.details : [null]
+
+                    return details.map((detail: any, detailIndex: number) => {
+                      const isFirstDetail = detailIndex === 0
+                      const detailCount = details.length
+
+                      let shouldRenderDetailFields = true
+                      let detailFieldRowspan = 1
+
+                      if (detail && detailIndex > 0) {
+                        // Check if this detail has the same values as the previous detail
+                        const prevDetail = details[detailIndex - 1]
+                        if (
+                          prevDetail &&
+                          prevDetail.endUser === detail.endUser &&
+                          prevDetail.makerCode === detail.makerCode &&
+                          prevDetail.productName === detail.productName &&
+                          prevDetail.orderQty === detail.orderQty &&
+                          prevDetail.unitPrice === detail.unitPrice &&
+                          prevDetail.orderCode === detail.orderCode
+                        ) {
+                          shouldRenderDetailFields = false
+                        }
+                      }
+
+                      // If this is the first occurrence, calculate how many consecutive duplicates follow
+                      if (detail && shouldRenderDetailFields) {
+                        for (let i = detailIndex + 1; i < details.length; i++) {
+                          const nextDetail = details[i]
+                          if (
+                            nextDetail &&
+                            nextDetail.endUser === detail.endUser &&
+                            nextDetail.makerCode === detail.makerCode &&
+                            nextDetail.productName === detail.productName &&
+                            nextDetail.orderQty === detail.orderQty &&
+                            nextDetail.unitPrice === detail.unitPrice &&
+                            nextDetail.orderCode === detail.orderCode
+                          ) {
+                            detailFieldRowspan++
+                          } else {
+                            break
+                          }
+                        }
+                      }
+
+                      return (
+                        <tr
+                          key={`${item.orderNumber}-${detailIndex}`}
+                          className={`cursor-pointer hover:bg-gray-100 ${isSelected ? "bg-blue-100" : ""} ${
+                            isDeleted ? "opacity-50" : ""
+                          }`}
                           style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={() => handleRowClick(item.orderNumber)}
                         >
-                          <Checkbox
-                            checked={isSelected}
-                            onCheckedChange={(checked) => handleItemSelect(item.orderNumber)}
-                          />
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          {item.orderDate}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          {item.supplierCode.substring(0, 4)}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          {item.supplierName}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          {item.productCode}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          ¥{item.orderAmountExcludingTax}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          ¥{item.consumptionTaxAmount}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          ¥{item.orderAmountIncludingTax}
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Select
-                            value={
-                              orderClassificationOptions.find((opt) => opt.label.includes(item.orderClassification))
-                                ?.value || "1"
-                            }
-                            onValueChange={(value) => handleOrderClassificationChange(item.orderNumber, value)}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs border-none bg-transparent">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {orderClassificationOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td
-                          className="border border-gray-400 px-1 py-0.5 text-black"
-                          style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                        >
-                          {item.directDeliveryClassification}
-                        </td>
-                      </tr>
-                    )
+                          {isFirstDetail && (
+                            <>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-center text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                onClick={(e) => e.stopPropagation()}
+                                rowSpan={detailCount}
+                              >
+                                <Checkbox
+                                  checked={isSelected}
+                                  onCheckedChange={(checked) => handleItemSelect(item.orderNumber)}
+                                />
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.orderDate}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.supplierCode.substring(0, 4)}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.supplierName}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.productCode}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                ¥{item.orderAmountExcludingTax}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                ¥{item.consumptionTaxAmount}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                ¥{item.orderAmountIncludingTax}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                onClick={(e) => e.stopPropagation()}
+                                rowSpan={detailCount}
+                              >
+                                <Select
+                                  value={
+                                    orderClassificationOptions.find((opt) =>
+                                      opt.label.includes(item.orderClassification),
+                                    )?.value || "1"
+                                  }
+                                  onValueChange={(value) => handleOrderClassificationChange(item.orderNumber, value)}
+                                >
+                                  <SelectTrigger className="w-full h-6 text-xs border-none bg-transparent">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {orderClassificationOptions.map((option) => (
+                                      <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.directDeliveryClassification}
+                              </td>
+                            </>
+                          )}
+                          {shouldRenderDetailFields ? (
+                            <>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {`R${(index + 1).toString().padStart(6, "0")}`}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                              >
+                                {detailIndex + 1}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.endUser : ""}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.makerCode : ""}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.productName : ""}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.orderQty : ""}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? `¥${detail.unitPrice}` : ""}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                              >
+                                通常
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Input
+                                  value={detail ? detail.orderCode : ""}
+                                  onChange={(e) => handleMemoChange(item.orderNumber, detailIndex, e.target.value)}
+                                  className="h-6 text-xs border-gray-300 bg-white"
+                                />
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                              >
+                                {detailIndex + 1}
+                              </td>
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                              >
+                                通常
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      )
+                    })
                   })}
                 </tbody>
               </table>
@@ -948,13 +862,6 @@ export default function JapaneseOrderForm() {
           {/* Action buttons */}
           <div className="flex justify-between items-center mt-4">
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="h-8 text-sm bg-blue-500 text-white hover:bg-blue-600"
-                onClick={handleDetailDisplay}
-              >
-                明細表示
-              </Button>
               <Button
                 variant="outline"
                 className="h-8 text-sm bg-red-500 text-white hover:bg-red-600"
@@ -984,14 +891,14 @@ export default function JapaneseOrderForm() {
       <DetailEditDialog
         isOpen={isDetailEditDialogOpen}
         onClose={() => setIsDetailEditDialogOpen(false)}
-        selectedItems={selectedItemsData}
+        selectedItems={selectedItems}
         onSave={handleSaveEditedDetails}
       />
 
       <OrderPreviewDialog
         isOpen={isOrderPreviewDialogOpen}
         onClose={() => setIsOrderPreviewDialogOpen(false)}
-        selectedItems={selectedItemsData}
+        selectedItems={selectedItems}
         onPrint={handlePrint}
         onSavePDF={handleSavePDF}
       />
@@ -999,7 +906,7 @@ export default function JapaneseOrderForm() {
       <OrderDetailDisplayDialog
         isOpen={showDetailDisplayDialog}
         onClose={() => setShowDetailDisplayDialog(false)}
-        selectedItems={selectedItemsData}
+        selectedItems={selectedItems}
       />
 
       <DeleteConfirmationDialog
