@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import OrderSearchForm from "@/components/order-search-form"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import Footer from "@/components/footer"
@@ -367,7 +366,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                       !desiredDeliveryDate && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <span className="mr-2">📅</span>
                     {desiredDeliveryDate ? format(desiredDeliveryDate, "yyyy/MM/dd") : <span>日付を選択</span>}
                   </Button>
                 </PopoverTrigger>
