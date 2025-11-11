@@ -23,6 +23,7 @@ export default function JapaneseOrderForm() {
   const [showDetailDisplayDialog, setShowDetailDisplayDialog] = useState(false)
   const [showDeletedOrders, setShowDeletedOrders] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [selectedAction, setSelectedAction] = useState<string>("")
 
   const [isDetailEditDialogOpen, setIsDetailEditDialogOpen] = useState(false)
   const [isOrderPreviewDialogOpen, setIsOrderPreviewDialogOpen] = useState(false)
@@ -407,7 +408,22 @@ export default function JapaneseOrderForm() {
   ]
 
   const handleActionSelect = (value: string) => {
-    switch (value) {
+    setSelectedAction(value)
+  }
+
+  const handleRegister = () => {
+    if (!selectedAction) {
+      alert("アクションを選択してください")
+      return
+    }
+
+    if (selectedItems.length === 0) {
+      alert("処理する明細を選択してください")
+      return
+    }
+
+    // Execute the selected action
+    switch (selectedAction) {
       case "print":
         handleOrderFormPrint()
         break
@@ -424,6 +440,9 @@ export default function JapaneseOrderForm() {
         handleMailPDF()
         break
     }
+
+    // Reset the selected action after execution
+    setSelectedAction("")
   }
 
   const handleOrderClassificationChange = (orderNumber: string, value: string) => {
@@ -871,7 +890,14 @@ export default function JapaneseOrderForm() {
               </Button>
             </div>
             <div className="flex gap-2">
-              <Select onValueChange={handleActionSelect}>
+              <Button
+                variant="outline"
+                className="h-8 text-sm bg-blue-500 text-white hover:bg-blue-600"
+                onClick={handleRegister}
+              >
+                登録
+              </Button>
+              <Select value={selectedAction} onValueChange={handleActionSelect}>
                 <SelectTrigger className="w-40 h-8 text-sm">
                   <SelectValue placeholder="アクションを選択" />
                 </SelectTrigger>
