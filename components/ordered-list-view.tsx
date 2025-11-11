@@ -16,40 +16,136 @@ interface OrderedListViewProps {
   initialSearchParams?: { [key: string]: string | string[] | undefined }
 }
 
+interface OrderDetail {
+  makerCode: string
+  productName: string
+  specification: string
+  model: string
+  quantity: string
+  orderQty: string
+  unitPrice: string
+}
+
+interface SupplierOrder {
+  supplierCode: string
+  company: string
+  method: string
+  orderCode: string
+  endUser: string
+  details: OrderDetail[]
+}
+
 export default function OrderedListView({ initialSearchParams }: OrderedListViewProps) {
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState<Date | undefined>(new Date(2024, 10, 20))
-  const [currentPage, setCurrentPage] = useState(1) // Current page state
-  const itemsPerPage = 10 // Items per page
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const [f11Mode, setF11Mode] = useState<"ダイアログ検索" | "直接入力">("ダイアログ検索")
 
-  // Dummy data for the table (replace with actual fetched data based on searchParams)
-  // Expanded dummy data to demonstrate pagination
-  const [tableData, setTableData] = useState(
-    Array.from({ length: 25 }, (_, i) => {
-      const supplierNum = (i % 4) + 1
-      const supplierCode = supplierNum.toString().padStart(4, "0")
-      return {
-        supplierCode: supplierCode,
-        company: `仕入先${supplierNum}`,
-        method: ["FAX", "WEB", "EDI", "メール"][i % 4],
-        orderCode: `メモ${i + 1}`,
-        orderNumber: `T01-000${i + 1}`,
-        endUser: `得意先${(i % 3) + 1}`,
-        makerCode: `M-${(i % 5) + 1}`,
-        productName: `商品名${i + 1}`,
-        specification: `規格${i + 1}`,
-        model: `モデル${i + 1}`,
-        quantity: `${(i % 3) + 1}台`,
-        orderQty: `${(i % 5) + 1}`,
-        unitPrice: `${(i + 1) * 1000}`,
-      }
-    }),
-  )
+  const [tableData, setTableData] = useState<SupplierOrder[]>([
+    {
+      supplierCode: "0001",
+      company: "仕入先1",
+      method: "FAX",
+      orderCode: "メモ1",
+      endUser: "得意先1",
+      details: [
+        {
+          makerCode: "M-1",
+          productName: "商品名1-1",
+          specification: "規格1-1",
+          model: "モデル1-1",
+          quantity: "1台",
+          orderQty: "1",
+          unitPrice: "1000",
+        },
+        {
+          makerCode: "M-2",
+          productName: "商品名1-2",
+          specification: "規格1-2",
+          model: "モデル1-2",
+          quantity: "2台",
+          orderQty: "2",
+          unitPrice: "2000",
+        },
+      ],
+    },
+    {
+      supplierCode: "0002",
+      company: "仕入先2",
+      method: "WEB",
+      orderCode: "メモ2",
+      endUser: "得意先2",
+      details: [
+        {
+          makerCode: "M-3",
+          productName: "商品名2-1",
+          specification: "規格2-1",
+          model: "モデル2-1",
+          quantity: "3台",
+          orderQty: "3",
+          unitPrice: "3000",
+        },
+      ],
+    },
+    {
+      supplierCode: "0003",
+      company: "仕入先3",
+      method: "EDI",
+      orderCode: "メモ3",
+      endUser: "得意先3",
+      details: [
+        {
+          makerCode: "M-4",
+          productName: "商品名3-1",
+          specification: "規格3-1",
+          model: "モデル3-1",
+          quantity: "1台",
+          orderQty: "1",
+          unitPrice: "4000",
+        },
+        {
+          makerCode: "M-5",
+          productName: "商品名3-2",
+          specification: "規格3-2",
+          model: "モデル3-2",
+          quantity: "2台",
+          orderQty: "2",
+          unitPrice: "5000",
+        },
+        {
+          makerCode: "M-6",
+          productName: "商品名3-3",
+          specification: "規格3-3",
+          model: "モデル3-3",
+          quantity: "3台",
+          orderQty: "3",
+          unitPrice: "6000",
+        },
+      ],
+    },
+    {
+      supplierCode: "0004",
+      company: "仕入先4",
+      method: "メール",
+      orderCode: "メモ4",
+      endUser: "得意先4",
+      details: [
+        {
+          makerCode: "M-7",
+          productName: "商品名4-1",
+          specification: "規格4-1",
+          model: "モデル4-1",
+          quantity: "1台",
+          orderQty: "1",
+          unitPrice: "7000",
+        },
+      ],
+    },
+  ])
 
   const [filteredData, setFilteredData] = useState(tableData)
 
-  // Add this useEffect after the state declarations
   useEffect(() => {
     setFilteredData(tableData)
   }, [tableData])
@@ -58,7 +154,6 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
     console.log("OrderedListView 検索条件:", searchParams)
     let filtered = [...tableData]
 
-    // Filter by supplier code
     if (searchParams.supplierCode) {
       filtered = filtered.filter(
         (item) =>
@@ -68,44 +163,37 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
       )
     }
 
-    // Filter by supplier name
     if (searchParams.supplierName) {
       filtered = filtered.filter((item) => item.company.includes(searchParams.supplierName))
     }
 
-    // Filter by order method
     if (searchParams.orderMethod) {
       filtered = filtered.filter((item) => item.method === searchParams.orderMethod)
     }
 
-    // Filter by staff code
     if (searchParams.staffCode) {
       filtered = filtered.filter((item) => item.staffCode === searchParams.staffCode)
     }
 
-    // Filter by maker code
     if (searchParams.makerCode) {
-      filtered = filtered.filter((item) => item.makerCode.includes(searchParams.makerCode))
+      filtered = filtered.filter((item) =>
+        item.details.some((detail) => detail.makerCode.includes(searchParams.makerCode)),
+      )
     }
 
-    // Filter by order date range
     if (searchParams.orderDateStart || searchParams.orderDateEnd) {
-      // For demo purposes, we'll assume all current data is within the date range
-      // In a real application, you would compare actual dates
       console.log("日付範囲でフィルタリング:", searchParams.orderDateStart, "〜", searchParams.orderDateEnd)
     }
 
     setFilteredData(filtered)
-    setCurrentPage(1) // Reset to first page after search
+    setCurrentPage(1)
     console.log(`OrderedListView 検索結果: ${filtered.length}件`)
   }
 
-  // Get current items for the page
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem)
 
-  // Calculate total pages
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
 
   const handleCheckboxChange = (index: number, checked: boolean) => {
@@ -131,13 +219,11 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
     <div className="flex flex-col flex-grow pb-20" style={{ backgroundColor: "#FAF5E9" }}>
       <Card className="w-full flex-grow">
         <CardContent className="p-6 bg-[#FAF5E9] flex flex-grow flex-col py-6">
-          {/* Header Section - Use OrderSearchForm with initial search parameters */}
           <OrderSearchForm
             initialSearchParams={initialSearchParams}
             onSearch={handleSearch}
             onF11ModeChange={setF11Mode}
           />
-          {/* Table Section */}
           <div className="mb-4 flex-grow">
             <div className="flex items-center gap-2 text-sm mb-2">
               <Checkbox
@@ -156,56 +242,84 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                     <th className="border border-gray-400 p-1 w-16">発注方法</th>
                     <th className="border border-gray-400 p-1 w-24">メーカー連絡メモ</th>
                     <th className="border border-gray-400 p-1 w-20">得意先名</th>
-                    <th className="border border-gray-400 p-1 w-16">管理コード</th>
                     <th className="border border-gray-400 p-1 w-16">メーカーコード</th>
                     <th className="border border-gray-400 p-1 w-32">商品名</th>
                     <th className="border border-gray-400 p-1 w-20">規格(型番)</th>
                     <th className="border border-gray-400 p-1 w-20">容量(入数/単位)</th>
                     <th className="border border-gray-400 p-1 w-16">注文数</th>
                     <th className="border border-gray-400 p-1 w-20">原単価</th>
+                    <th className="border border-gray-400 p-1 w-16">直送区分</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map((row, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="border border-gray-400 p-1 text-center">
-                        <Checkbox
-                          checked={selectedItems.includes(indexOfFirstItem + index)}
-                          onCheckedChange={(checked) =>
-                            handleCheckboxChange(indexOfFirstItem + index, checked as boolean)
-                          }
-                        />
-                      </td>
-                      <td className="border border-gray-400 p-1">{row.supplierCode}</td>
-                      <td className="border border-gray-400 p-1">{row.company}</td>
-                      <td className="border border-gray-400 p-1">{row.method}</td>
-                      <td className="border border-gray-400 p-1">{row.orderCode}</td>
-                      <td className="border border-gray-400 p-1">{row.endUser}</td>
-                      <td className="border border-gray-400 p-1"></td>
-                      <td className="border border-gray-400 p-1">{row.makerCode}</td>
-                      <td className="border border-gray-400 p-1">{row.productName}</td>
-                      <td className="border border-gray-400 p-1">{row.specification}</td>
-                      <td className="border border-gray-400 p-1">{row.quantity}</td>
-                      <td className="border border-gray-400 p-1">{row.orderQty}</td>
-                      <td className="border border-gray-400 p-1">{row.unitPrice}</td>
-                    </tr>
-                  ))}
-                  {/* Empty rows to fill up to itemsPerPage */}
-                  {Array.from({ length: itemsPerPage - currentItems.length }).map((_, index) => (
-                    <tr key={`empty-${index}`}>
-                      <td className="border border-gray-400 p-1 text-center">
-                        <Checkbox />
-                      </td>
-                      {[...Array(12)].map((_, cellIndex) => (
-                        <td key={cellIndex} className="border border-gray-400 p-1 h-8"></td>
-                      ))}
-                    </tr>
-                  ))}
+                  {currentItems.map((supplier, supplierIndex) =>
+                    supplier.details.map((detail, detailIndex) => (
+                      <tr key={`${indexOfFirstItem + supplierIndex}-${detailIndex}`} className="hover:bg-gray-50">
+                        {detailIndex === 0 && (
+                          <>
+                            <td
+                              key={`checkbox-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 text-center bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              <Checkbox
+                                checked={selectedItems.includes(indexOfFirstItem + supplierIndex)}
+                                onCheckedChange={(checked) =>
+                                  handleCheckboxChange(indexOfFirstItem + supplierIndex, checked as boolean)
+                                }
+                              />
+                            </td>
+                            <td
+                              key={`code-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              {supplier.supplierCode}
+                            </td>
+                            <td
+                              key={`company-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              {supplier.company}
+                            </td>
+                            <td
+                              key={`method-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              {supplier.method}
+                            </td>
+                            <td
+                              key={`order-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              {supplier.orderCode}
+                            </td>
+                            <td
+                              key={`user-${indexOfFirstItem + supplierIndex}`}
+                              className="border border-gray-400 p-1 bg-blue-50"
+                              rowSpan={supplier.details.length}
+                            >
+                              {supplier.endUser}
+                            </td>
+                          </>
+                        )}
+                        <td className="border border-gray-400 p-1">{detail.makerCode}</td>
+                        <td className="border border-gray-400 p-1">{detail.productName}</td>
+                        <td className="border border-gray-400 p-1">{detail.specification}</td>
+                        <td className="border border-gray-400 p-1">{detail.quantity}</td>
+                        <td className="border border-gray-400 p-1">{detail.orderQty}</td>
+                        <td className="border border-gray-400 p-1">{detail.unitPrice}</td>
+                        <td className="border border-gray-400 p-1"></td>
+                      </tr>
+                    )),
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-4 mb-4 bg-[#FAF5E9] relative z-10">
               <Button
@@ -241,7 +355,6 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
               </Button>
             </div>
           )}
-          {/* Bottom Section */}
           <div className="flex items-center gap-4 mt-auto mb-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-900 font-medium">希望納期</span>
