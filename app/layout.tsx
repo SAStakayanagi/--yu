@@ -1,11 +1,19 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
+import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { BackNavigationHandler } from "@/components/back-navigation-handler"
 import { Suspense } from "react"
+
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+})
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+})
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -19,13 +27,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <Suspense fallback={null}>
           <BackNavigationHandler />
         </Suspense>
         {children}
-        <Analytics />
       </body>
     </html>
   )
