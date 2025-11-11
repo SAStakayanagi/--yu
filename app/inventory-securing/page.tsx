@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon, Search } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -199,7 +198,7 @@ export default function InventorySecuringPage() {
                 className="h-8 text-sm bg-blue-500 text-white hover:bg-blue-600"
                 onClick={() => setIsProductSearchOpen(true)}
               >
-                <Search className="mr-1 h-4 w-4" />
+                <span className="mr-1">🔍</span>
                 商品検索
               </Button>
               <Button
@@ -207,7 +206,7 @@ export default function InventorySecuringPage() {
                 className="h-8 text-sm bg-green-500 text-white hover:bg-green-600"
                 onClick={() => setIsSupplierSearchOpen(true)}
               >
-                <Search className="mr-1 h-4 w-4" />
+                <span className="mr-1">🔍</span>
                 仕入先検索
               </Button>
             </div>
@@ -235,7 +234,7 @@ export default function InventorySecuringPage() {
                           !orderFormData.orderDate && "text-muted-foreground",
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-3 w-3" />
+                        <span className="mr-2">📅</span>
                         {orderFormData.orderDate ? format(orderFormData.orderDate, "yyyy/MM/dd") : "日付を選択"}
                       </Button>
                     </PopoverTrigger>
@@ -262,7 +261,7 @@ export default function InventorySecuringPage() {
                           !orderFormData.deliveryDate && "text-muted-foreground",
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-3 w-3" />
+                        <span className="mr-2">📅</span>
                         {orderFormData.deliveryDate ? format(orderFormData.deliveryDate, "yyyy/MM/dd") : "日付を選択"}
                       </Button>
                     </PopoverTrigger>
@@ -563,7 +562,7 @@ export default function InventorySecuringPage() {
                                   !detail.lotExpiration && "text-muted-foreground",
                                 )}
                               >
-                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                <span className="mr-1">📅</span>
                                 {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "選択"}
                               </Button>
                             </PopoverTrigger>
