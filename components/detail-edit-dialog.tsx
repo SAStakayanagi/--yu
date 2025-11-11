@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
@@ -157,7 +158,7 @@ export default function DetailEditDialog({ open, onOpenChange, selectedItems, on
                           !item.expirationDate && "text-muted-foreground",
                         )}
                       >
-                        <span className="mr-2">📅</span>
+                        <CalendarIcon className="mr-2 h-3 w-3" />
                         {item.expirationDate ? format(item.expirationDate, "yyyy/MM/dd") : <span>日付を選択</span>}
                       </Button>
                     </PopoverTrigger>

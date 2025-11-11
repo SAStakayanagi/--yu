@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import OrderSearchForm from "@/components/order-search-form"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import Footer from "@/components/footer"
@@ -23,6 +24,15 @@ interface OrderDetail {
   quantity: string
   orderQty: string
   unitPrice: string
+  orderNumber: string
+  orderLineNumber: string
+  customerName: string
+  productCode: string
+  detailProductName: string
+  detailQuantity: string
+  purchaseAmount: string
+  issueType: string
+  orderMemo: string
 }
 
 interface SupplierOrder {
@@ -57,6 +67,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "1台",
           orderQty: "1",
           unitPrice: "1000",
+          orderNumber: "R-001",
+          orderLineNumber: "1",
+          customerName: "顧客A",
+          productCode: "P-001",
+          detailProductName: "詳細商品名1-1",
+          detailQuantity: "10",
+          purchaseAmount: "10000",
+          issueType: "未発行",
+          orderMemo: "メモ1-1",
         },
         {
           makerCode: "M-2",
@@ -66,6 +85,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "2台",
           orderQty: "2",
           unitPrice: "2000",
+          orderNumber: "R-002",
+          orderLineNumber: "2",
+          customerName: "顧客B",
+          productCode: "P-002",
+          detailProductName: "詳細商品名1-2",
+          detailQuantity: "20",
+          purchaseAmount: "20000",
+          issueType: "発行済",
+          orderMemo: "メモ1-2",
         },
       ],
     },
@@ -84,6 +112,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "3台",
           orderQty: "3",
           unitPrice: "3000",
+          orderNumber: "R-003",
+          orderLineNumber: "1",
+          customerName: "顧客C",
+          productCode: "P-003",
+          detailProductName: "詳細商品名2-1",
+          detailQuantity: "30",
+          purchaseAmount: "30000",
+          issueType: "未発行",
+          orderMemo: "メモ2-1",
         },
       ],
     },
@@ -102,6 +139,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "1台",
           orderQty: "1",
           unitPrice: "4000",
+          orderNumber: "R-004",
+          orderLineNumber: "1",
+          customerName: "顧客D",
+          productCode: "P-004",
+          detailProductName: "詳細商品名3-1",
+          detailQuantity: "40",
+          purchaseAmount: "40000",
+          issueType: "発行済",
+          orderMemo: "メモ3-1",
         },
         {
           makerCode: "M-5",
@@ -111,6 +157,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "2台",
           orderQty: "2",
           unitPrice: "5000",
+          orderNumber: "R-005",
+          orderLineNumber: "2",
+          customerName: "顧客E",
+          productCode: "P-005",
+          detailProductName: "詳細商品名3-2",
+          detailQuantity: "50",
+          purchaseAmount: "50000",
+          issueType: "未発行",
+          orderMemo: "メモ3-2",
         },
         {
           makerCode: "M-6",
@@ -120,6 +175,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "3台",
           orderQty: "3",
           unitPrice: "6000",
+          orderNumber: "R-006",
+          orderLineNumber: "3",
+          customerName: "顧客F",
+          productCode: "P-006",
+          detailProductName: "詳細商品名3-3",
+          detailQuantity: "60",
+          purchaseAmount: "60000",
+          issueType: "発行済",
+          orderMemo: "メモ3-3",
         },
       ],
     },
@@ -138,6 +202,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
           quantity: "1台",
           orderQty: "1",
           unitPrice: "7000",
+          orderNumber: "R-007",
+          orderLineNumber: "1",
+          customerName: "顧客G",
+          productCode: "P-007",
+          detailProductName: "詳細商品名4-1",
+          detailQuantity: "70",
+          purchaseAmount: "70000",
+          issueType: "未発行",
+          orderMemo: "メモ4-1",
         },
       ],
     },
@@ -248,6 +321,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                     <th className="border border-gray-400 p-1 w-16">注文数</th>
                     <th className="border border-gray-400 p-1 w-20">原単価</th>
                     <th className="border border-gray-400 p-1 w-16">直送区分</th>
+                    <th className="border border-gray-400 p-1 w-20">受注番号</th>
+                    <th className="border border-gray-400 p-1 w-20">受注行番号</th>
+                    <th className="border border-gray-400 p-1 w-24">得意先名</th>
+                    <th className="border border-gray-400 p-1 w-20">商品コード</th>
+                    <th className="border border-gray-400 p-1 w-32">商品名</th>
+                    <th className="border border-gray-400 p-1 w-16">数量</th>
+                    <th className="border border-gray-400 p-1 w-20">仕入金額</th>
+                    <th className="border border-gray-400 p-1 w-20">発行区分</th>
+                    <th className="border border-gray-400 p-1 w-32">発注書メモ欄</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -312,6 +394,15 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                         <td className="border border-gray-400 p-1">{detail.orderQty}</td>
                         <td className="border border-gray-400 p-1">{detail.unitPrice}</td>
                         <td className="border border-gray-400 p-1"></td>
+                        <td className="border border-gray-400 p-1">{detail.orderNumber}</td>
+                        <td className="border border-gray-400 p-1">{detail.orderLineNumber}</td>
+                        <td className="border border-gray-400 p-1">{detail.customerName}</td>
+                        <td className="border border-gray-400 p-1">{detail.productCode}</td>
+                        <td className="border border-gray-400 p-1">{detail.detailProductName}</td>
+                        <td className="border border-gray-400 p-1">{detail.detailQuantity}</td>
+                        <td className="border border-gray-400 p-1">{detail.purchaseAmount}</td>
+                        <td className="border border-gray-400 p-1">{detail.issueType}</td>
+                        <td className="border border-gray-400 p-1">{detail.orderMemo}</td>
                       </tr>
                     )),
                   )}
@@ -366,7 +457,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                       !desiredDeliveryDate && "text-muted-foreground",
                     )}
                   >
-                    <span className="mr-2">📅</span>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
                     {desiredDeliveryDate ? format(desiredDeliveryDate, "yyyy/MM/dd") : <span>日付を選択</span>}
                   </Button>
                 </PopoverTrigger>

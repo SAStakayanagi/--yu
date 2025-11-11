@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 
@@ -91,7 +92,7 @@ export default function OrderCreationDialog({ open, onOpenChange }: OrderCreatio
                   variant="outline"
                   className={cn("w-full justify-start text-left font-normal", !orderDate && "text-muted-foreground")}
                 >
-                  <span className="mr-2">📅</span>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   {orderDate ? format(orderDate, "yyyy/MM/dd") : "日付を選択"}
                 </Button>
               </PopoverTrigger>
