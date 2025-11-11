@@ -1,8 +1,11 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { BackNavigationHandler } from "@/components/back-navigation-handler"
 import { Suspense } from "react"
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -17,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.variable}>
         <Suspense fallback={null}>
           <BackNavigationHandler />
         </Suspense>

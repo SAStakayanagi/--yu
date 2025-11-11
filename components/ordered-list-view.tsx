@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import OrderSearchForm from "@/components/order-search-form"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Footer from "@/components/footer"
 
@@ -286,8 +285,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
   const allItemsSelected = selectedItems.length === tableData.length && tableData.length > 0
 
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return ""
+  const formatDate = (date: Date) => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const day = String(date.getDate()).padStart(2, "0")
@@ -312,7 +310,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
               <span>全選択↓</span>
             </div>
             <div className="border border-gray-400 overflow-x-auto">
-              <table className="w-full text-xs table-fixed">
+              <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="border border-gray-400 p-1 w-12">登録</th>
@@ -464,7 +462,7 @@ export default function OrderedListView({ initialSearchParams }: OrderedListView
                       !desiredDeliveryDate && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <span className="mr-2">📅</span>
                     {desiredDeliveryDate ? formatDate(desiredDeliveryDate) : <span>日付を選択</span>}
                   </Button>
                 </PopoverTrigger>
