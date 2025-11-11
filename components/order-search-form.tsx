@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon, Search } from "lucide-react"
 import { format } from "date-fns"
 import SupplierSearchDialog from "./supplier-search-dialog"
 import ProductSearchDialog from "./product-search-dialog"
@@ -166,7 +165,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="h-8 text-xs bg-white justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-3 w-3" />
+                      <span className="mr-2">📅</span>
                       {orderDateStart ? format(orderDateStart, "yyyy/MM/dd") : "開始日"}
                     </Button>
                   </PopoverTrigger>
@@ -178,7 +177,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="h-8 text-xs bg-white justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-3 w-3" />
+                      <span className="mr-2">📅</span>
                       {orderDateEnd ? format(orderDateEnd, "yyyy/MM/dd") : "終了日"}
                     </Button>
                   </PopoverTrigger>
@@ -211,7 +210,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                   className="h-8 w-8 p-0 bg-white"
                   onClick={() => setIsCustomerSearchOpen(true)}
                 >
-                  <Search className="h-3 w-3" />
+                  <span className="text-xs">🔍</span>
                 </Button>
               </div>
             </div>
@@ -238,7 +237,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                   className="h-8 w-8 p-0 bg-white"
                   onClick={() => setIsSupplierSearchOpen(true)}
                 >
-                  <Search className="h-3 w-3" />
+                  <span className="text-xs">🔍</span>
                 </Button>
               </div>
             </div>
@@ -265,7 +264,7 @@ const OrderSearchForm = forwardRef<OrderSearchFormHandle, OrderSearchFormProps>(
                   className="h-8 w-8 p-0 bg-white"
                   onClick={() => setIsProductSearchOpen(true)}
                 >
-                  <Search className="h-3 w-3" />
+                  <span className="text-xs">🔍</span>
                 </Button>
               </div>
             </div>
