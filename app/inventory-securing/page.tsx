@@ -9,7 +9,6 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon, Search } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -38,26 +37,27 @@ export default function InventorySecuringPage() {
     supplierName: "", // New field to store selected supplier name
   })
 
-  // Order detail items
   const [orderDetails, setOrderDetails] = useState([
     {
-      productCode: "",
-      productName: "",
-      makerCode: "",
-      specification: "",
-      capacity: "",
-      janCode: "",
-      temperatureCategory: "",
-      regulationCategory: "一般", // Default value
-      productCategory: "試薬", // Default value
-      orderMethod: "FAX", // Default value
-      quantity: "",
-      unitPrice: 0,
-      taxRate: 10,
-      issueCategory: "",
-      makerMemo: "",
-      lotNumber: "",
-      lotExpiration: undefined as Date | undefined,
+      registered: false, // 登録
+      orderDate: new Date(), // 発注日
+      orderNumber: "", // 受注番号
+      makerProductCode: "", // メーカー商品コード
+      supplierUniqueCode: "", // 仕入先独自コード
+      productCode: "", // 商品コード
+      supplierName: "", // 仕入先名
+      customerName: "", // 得意先名
+      jdUnifiedCode: "", // JD統一コード
+      productName: "", // 商品名
+      specification: "", // 規格
+      capacity: "", // 容量
+      quantity: "1", // 数量
+      unitPriceExcludingTax: 0, // 仕入単価(税抜)
+      orderAmountExcludingTax: 0, // 発注金額(税抜)
+      orderCategory: "", // 発注区分
+      directDeliveryCategory: "", // 直送区分
+      orderFormMemo: "", // 発注書メモ欄
+      detailRemarks: "", // 明細備考
     },
   ])
 
@@ -77,22 +77,27 @@ export default function InventorySecuringPage() {
     }))
   }, [])
 
-  // Auto-calculate totals when order details change
   useEffect(() => {
     const totalPurchaseAmount = orderDetails.reduce((sum, item) => {
       const quantity = Number.parseInt(item.quantity) || 0
-      const unitPrice = item.unitPrice || 0
-      return sum + quantity * unitPrice
+      const unitPrice = item.unitPriceExcludingTax || 0
+      const amount = quantity * unitPrice
+      return sum + amount
     }, 0)
 
-    const totalTaxAmount = orderDetails.reduce((sum, item) => {
-      const quantity = Number.parseInt(item.quantity) || 0
-      const unitPrice = item.unitPrice || 0
-      const taxRate = item.taxRate || 0
-      return sum + (quantity * unitPrice * taxRate) / 100
-    }, 0)
-
+    const taxRate = 0.1 // 10% tax rate
+    const totalTaxAmount = totalPurchaseAmount * taxRate
     const totalPurchaseAmountWithTax = totalPurchaseAmount + totalTaxAmount
+
+    // Update order amount for each detail
+    const updatedDetails = orderDetails.map((item) => ({
+      ...item,
+      orderAmountExcludingTax: (Number.parseInt(item.quantity) || 0) * (item.unitPriceExcludingTax || 0),
+    }))
+
+    if (JSON.stringify(updatedDetails) !== JSON.stringify(orderDetails)) {
+      setOrderDetails(updatedDetails)
+    }
 
     setOrderFormData((prev) => ({
       ...prev,
@@ -106,23 +111,25 @@ export default function InventorySecuringPage() {
     setOrderDetails([
       ...orderDetails,
       {
+        registered: false,
+        orderDate: new Date(),
+        orderNumber: "",
+        makerProductCode: "",
+        supplierUniqueCode: "",
         productCode: "",
+        supplierName: "",
+        customerName: "",
+        jdUnifiedCode: "",
         productName: "",
-        makerCode: "",
         specification: "",
         capacity: "",
-        janCode: "",
-        temperatureCategory: "",
-        regulationCategory: "一般", // Default value
-        productCategory: "試薬", // Default value
-        orderMethod: "FAX", // Default value
-        quantity: "1", // Default quantity
-        unitPrice: 0,
-        taxRate: 10,
-        issueCategory: "",
-        makerMemo: "",
-        lotNumber: "",
-        lotExpiration: undefined,
+        quantity: "1",
+        unitPriceExcludingTax: 0,
+        orderAmountExcludingTax: 0,
+        orderCategory: "",
+        directDeliveryCategory: "",
+        orderFormMemo: "",
+        detailRemarks: "",
       },
     ])
   }
@@ -136,38 +143,37 @@ export default function InventorySecuringPage() {
   const handleProductSelect = (product: any) => {
     console.log("Selected product:", product)
 
-    // Find the first empty row or add a new row
     const emptyRowIndex = orderDetails.findIndex(
-      (detail) => !detail.productCode && !detail.productName && !detail.makerCode,
+      (detail) => !detail.productCode && !detail.productName && !detail.makerProductCode,
     )
 
     const newProductDetail = {
+      registered: false,
+      orderDate: new Date(),
+      orderNumber: "",
+      makerProductCode: product.makerCode || "",
+      supplierUniqueCode: "",
       productCode: product.code || "",
+      supplierName: "",
+      customerName: "",
+      jdUnifiedCode: product.janCode || "",
       productName: product.name || "",
-      makerCode: product.makerCode || "",
       specification: product.specification || "",
       capacity: product.capacity || "",
-      janCode: product.janCode || "",
-      temperatureCategory: product.temperatureCategory || "",
-      regulationCategory: "一般", // Default value
-      productCategory: "試薬", // Default value
-      orderMethod: "FAX", // Default value
-      quantity: "1", // Default quantity
-      unitPrice: product.unitPrice || 0,
-      taxRate: product.taxRate || 10,
-      issueCategory: "通常", // Default value
-      makerMemo: "",
-      lotNumber: "",
-      lotExpiration: undefined,
+      quantity: "1",
+      unitPriceExcludingTax: product.unitPrice || 0,
+      orderAmountExcludingTax: product.unitPrice || 0,
+      orderCategory: "",
+      directDeliveryCategory: "",
+      orderFormMemo: "",
+      detailRemarks: "",
     }
 
     if (emptyRowIndex !== -1) {
-      // Update existing empty row
       const newDetails = [...orderDetails]
       newDetails[emptyRowIndex] = newProductDetail
       setOrderDetails(newDetails)
     } else {
-      // Add new row
       setOrderDetails([...orderDetails, newProductDetail])
     }
 
@@ -176,8 +182,6 @@ export default function InventorySecuringPage() {
 
   const handleSupplierSelect = (supplier: any) => {
     console.log("Selected supplier for inventory reservation order:", supplier)
-    // Update the order form to reflect the selected supplier as the designated supplier for this inventory reservation order
-    // This selection designates the supplier for the current inventory reservation order
     alert(`仕入先「${supplier.name}」を今回の在庫確保発注の指定先として選択しました。`)
     setOrderFormData((prev) => ({
       ...prev,
@@ -367,40 +371,116 @@ export default function InventorySecuringPage() {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-2 w-32">商品名 *</th>
-                      <th className="border border-gray-300 p-2 w-24">メーカーコード *</th>
-                      <th className="border border-gray-300 p-2 w-24">規格(型番) *</th>
-                      <th className="border border-gray-300 p-2 w-24">容量(単位) *</th>
-                      <th className="border border-gray-300 p-2 w-24">JANコード *</th>
-                      <th className="border border-gray-300 p-2 w-20">管理温度区分 *</th>
-                      <th className="border border-gray-300 p-2 w-20">法規制区分 *</th>
-                      <th className="border border-gray-300 p-2 w-20">商品区分 *</th>
-                      <th className="border border-gray-300 p-2 w-20">発注方法 *</th>
-                      <th className="border border-gray-300 p-2 w-16">数量 *</th>
-                      <th className="border border-gray-300 p-2 w-20">原価(仕切値) *</th>
-                      <th className="border border-gray-300 p-2 w-16">消費税率 *</th>
-                      <th className="border border-gray-300 p-2 w-24">メーカー連絡メモ</th>
-                      <th className="border border-gray-300 p-2 w-20">LOT番号</th>
-                      <th className="border border-gray-300 p-2 w-24">LOT有効期限</th>
+                      <th className="border border-gray-300 p-2 w-16">登録</th>
+                      <th className="border border-gray-300 p-2 w-24">発注日</th>
+                      <th className="border border-gray-300 p-2 w-24">受注番号</th>
+                      <th className="border border-gray-300 p-2 w-28">メーカー商品コード</th>
+                      <th className="border border-gray-300 p-2 w-28">仕入先独自コード</th>
+                      <th className="border border-gray-300 p-2 w-24">商品コード</th>
+                      <th className="border border-gray-300 p-2 w-32">仕入先名</th>
+                      <th className="border border-gray-300 p-2 w-32">得意先名</th>
+                      <th className="border border-gray-300 p-2 w-24">JD統一コード</th>
+                      <th className="border border-gray-300 p-2 w-32">商品名</th>
+                      <th className="border border-gray-300 p-2 w-24">規格</th>
+                      <th className="border border-gray-300 p-2 w-24">容量</th>
+                      <th className="border border-gray-300 p-2 w-16">数量</th>
+                      <th className="border border-gray-300 p-2 w-24">仕入単価(税抜)</th>
+                      <th className="border border-gray-300 p-2 w-24">発注金額(税抜)</th>
+                      <th className="border border-gray-300 p-2 w-20">発注区分</th>
+                      <th className="border border-gray-300 p-2 w-20">直送区分</th>
+                      <th className="border border-gray-300 p-2 w-32">発注書メモ欄</th>
+                      <th className="border border-gray-300 p-2 w-32">明細備考</th>
                     </tr>
                   </thead>
                   <tbody>
                     {orderDetails.map((detail, index) => (
                       <tr key={index}>
+                        <td className="border border-gray-300 p-1 text-center">
+                          <input
+                            type="checkbox"
+                            checked={detail.registered}
+                            onChange={(e) => updateOrderDetail(index, "registered", e.target.checked)}
+                            className="w-4 h-4"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal h-6 text-xs p-1",
+                                  !detail.orderDate && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {detail.orderDate ? format(detail.orderDate, "yyyy/MM/dd") : "選択"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={detail.orderDate}
+                                onSelect={(date) => updateOrderDetail(index, "orderDate", date || new Date())}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.orderNumber}
+                            onChange={(e) => updateOrderDetail(index, "orderNumber", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.makerProductCode}
+                            onChange={(e) => updateOrderDetail(index, "makerProductCode", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.supplierUniqueCode}
+                            onChange={(e) => updateOrderDetail(index, "supplierUniqueCode", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.productCode}
+                            onChange={(e) => updateOrderDetail(index, "productCode", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.supplierName}
+                            onChange={(e) => updateOrderDetail(index, "supplierName", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.customerName}
+                            onChange={(e) => updateOrderDetail(index, "customerName", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.jdUnifiedCode}
+                            onChange={(e) => updateOrderDetail(index, "jdUnifiedCode", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
                         <td className="border border-gray-300 p-1">
                           <Input
                             value={detail.productName}
                             onChange={(e) => updateOrderDetail(index, "productName", e.target.value)}
                             className="w-full h-6 text-xs"
-                            disabled
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Input
-                            value={detail.makerCode}
-                            onChange={(e) => updateOrderDetail(index, "makerCode", e.target.value)}
-                            className="w-full h-6 text-xs"
-                            disabled
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
@@ -408,7 +488,6 @@ export default function InventorySecuringPage() {
                             value={detail.specification}
                             onChange={(e) => updateOrderDetail(index, "specification", e.target.value)}
                             className="w-full h-6 text-xs"
-                            disabled
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
@@ -416,73 +495,7 @@ export default function InventorySecuringPage() {
                             value={detail.capacity}
                             onChange={(e) => updateOrderDetail(index, "capacity", e.target.value)}
                             className="w-full h-6 text-xs"
-                            disabled
                           />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Input
-                            value={detail.janCode}
-                            onChange={(e) => updateOrderDetail(index, "janCode", e.target.value)}
-                            className="w-full h-6 text-xs"
-                            disabled
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Input
-                            value={detail.temperatureCategory}
-                            onChange={(e) => updateOrderDetail(index, "temperatureCategory", e.target.value)}
-                            className="w-full h-6 text-xs"
-                            disabled
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Select
-                            value={detail.regulationCategory}
-                            onValueChange={(value) => updateOrderDetail(index, "regulationCategory", value)}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="一般">一般</SelectItem>
-                              <SelectItem value="毒物">毒物</SelectItem>
-                              <SelectItem value="劇物">劇物</SelectItem>
-                              <SelectItem value="危険物">危険物</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Select
-                            value={detail.productCategory}
-                            onValueChange={(value) => updateOrderDetail(index, "productCategory", value)}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="試薬">試薬</SelectItem>
-                              <SelectItem value="機器">機器</SelectItem>
-                              <SelectItem value="消耗品">消耗品</SelectItem>
-                              <SelectItem value="その他">その他</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Select
-                            value={detail.orderMethod}
-                            onValueChange={(value) => updateOrderDetail(index, "orderMethod", value)}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="FAX">FAX</SelectItem>
-                              <SelectItem value="JD(EDI)">JD(EDI)</SelectItem>
-                              <SelectItem value="WG(EDI)">WG(EDI)</SelectItem>
-                              <SelectItem value="メール">メール</SelectItem>
-                              <SelectItem value="WEB">WEB</SelectItem>
-                            </SelectContent>
-                          </Select>
                         </td>
                         <td className="border border-gray-300 p-1">
                           <Input
@@ -494,66 +507,49 @@ export default function InventorySecuringPage() {
                         </td>
                         <td className="border border-gray-300 p-1">
                           <Input
-                            value={detail.unitPrice}
+                            value={detail.unitPriceExcludingTax}
                             onChange={(e) =>
-                              updateOrderDetail(index, "unitPrice", Number.parseFloat(e.target.value) || 0)
+                              updateOrderDetail(index, "unitPriceExcludingTax", Number.parseFloat(e.target.value) || 0)
                             }
                             className="w-full h-6 text-xs"
                             type="number"
-                            disabled
-                          />
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Select
-                            value={detail.taxRate.toString()}
-                            onValueChange={(value) => updateOrderDetail(index, "taxRate", Number.parseInt(value))}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="10">10%</SelectItem>
-                              <SelectItem value="8">8%</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-1">
-                          <Textarea
-                            value={detail.makerMemo}
-                            onChange={(e) => updateOrderDetail(index, "makerMemo", e.target.value)}
-                            className="w-full h-6 text-xs resize-none"
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
                           <Input
-                            value={detail.lotNumber}
-                            onChange={(e) => updateOrderDetail(index, "lotNumber", e.target.value)}
+                            value={detail.orderAmountExcludingTax}
+                            disabled
+                            className="w-full h-6 text-xs bg-gray-100"
+                            type="number"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Input
+                            value={detail.orderCategory}
+                            onChange={(e) => updateOrderDetail(index, "orderCategory", e.target.value)}
                             className="w-full h-6 text-xs"
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full justify-start text-left font-normal h-6 text-xs p-1",
-                                  !detail.lotExpiration && "text-muted-foreground",
-                                )}
-                              >
-                                <CalendarIcon className="mr-1 h-3 w-3" />
-                                {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "選択"}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={detail.lotExpiration}
-                                onSelect={(date) => updateOrderDetail(index, "lotExpiration", date)}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
+                          <Input
+                            value={detail.directDeliveryCategory}
+                            onChange={(e) => updateOrderDetail(index, "directDeliveryCategory", e.target.value)}
+                            className="w-full h-6 text-xs"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Textarea
+                            value={detail.orderFormMemo}
+                            onChange={(e) => updateOrderDetail(index, "orderFormMemo", e.target.value)}
+                            className="w-full h-6 text-xs resize-none"
+                          />
+                        </td>
+                        <td className="border border-gray-300 p-1">
+                          <Textarea
+                            value={detail.detailRemarks}
+                            onChange={(e) => updateOrderDetail(index, "detailRemarks", e.target.value)}
+                            className="w-full h-6 text-xs resize-none"
+                          />
                         </td>
                       </tr>
                     ))}
