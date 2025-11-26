@@ -50,6 +50,7 @@ export default function JapaneseOrderForm() {
         endUser: "●●大学",
         makerCode: "63-6334-36-30",
         supplierUniqueCode: "1234",
+        jdUnifiedCode: "1234567890123",
         productName: "分析天びん 320g",
         specification: "ML304T/00",
         model: "ML304T/00",
@@ -69,6 +70,7 @@ export default function JapaneseOrderForm() {
         endUser: "△△研究所",
         makerCode: "12-3456-78-90",
         supplierUniqueCode: "5678",
+        jdUnifiedCode: "9876543210987",
         productName: "pHメーター",
         specification: "PH-200",
         model: "PH-200",
@@ -88,6 +90,7 @@ export default function JapaneseOrderForm() {
         endUser: "□□病院",
         makerCode: "98-7654-32-10",
         supplierUniqueCode: "9012",
+        jdUnifiedCode: "4567890123456",
         productName: "遠心分離機",
         specification: "CEN-1000",
         model: "CEN-1000",
@@ -107,6 +110,7 @@ export default function JapaneseOrderForm() {
         endUser: "☆☆製薬",
         makerCode: "45-6789-01-23",
         supplierUniqueCode: "3456",
+        jdUnifiedCode: "7890123456789",
         productName: "試薬A",
         specification: "GR-100",
         model: "GR-100",
@@ -143,6 +147,7 @@ export default function JapaneseOrderForm() {
           orderDate: "2024/12/17", // Sample date
           supplierCode: supplierCode,
           supplierName: item.company,
+          supplierUniqueCode: item.supplierUniqueCode,
           orderAmountExcludingTax: taxExcludedAmount.toLocaleString(),
           consumptionTaxAmount: taxAmount.toLocaleString(),
           orderAmountIncludingTax: taxIncludedAmount.toLocaleString(),
@@ -176,9 +181,9 @@ export default function JapaneseOrderForm() {
   // Add this useEffect after the state declarations
   useEffect(() => {
     const sortedData = [...tableData].sort((a, b) => {
-      const codeA = a.supplierUniqueCode || ""
-      const codeB = b.supplierUniqueCode || ""
-      return codeA.localeCompare(codeB)
+      const codeA = Number.parseInt(a.supplierUniqueCode || "0", 10)
+      const codeB = Number.parseInt(b.supplierUniqueCode || "0", 10)
+      return codeA - codeB
     })
     setFilteredData(sortedData)
   }, [tableData])
@@ -206,9 +211,9 @@ export default function JapaneseOrderForm() {
     }
 
     filtered.sort((a, b) => {
-      const codeA = a.supplierUniqueCode || ""
-      const codeB = b.supplierUniqueCode || ""
-      return codeA.localeCompare(codeB)
+      const codeA = Number.parseInt(a.supplierUniqueCode || "0", 10)
+      const codeB = Number.parseInt(b.supplierUniqueCode || "0", 10)
+      return codeA - codeB
     })
 
     setFilteredData(filtered)
