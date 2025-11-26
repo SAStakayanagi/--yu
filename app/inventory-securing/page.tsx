@@ -367,7 +367,6 @@ export default function InventorySecuringPage() {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="border border-gray-300 p-2 w-24">商品コード *</th>
                       <th className="border border-gray-300 p-2 w-32">商品名 *</th>
                       <th className="border border-gray-300 p-2 w-24">メーカーコード *</th>
                       <th className="border border-gray-300 p-2 w-24">規格(型番) *</th>
@@ -380,7 +379,6 @@ export default function InventorySecuringPage() {
                       <th className="border border-gray-300 p-2 w-16">数量 *</th>
                       <th className="border border-gray-300 p-2 w-20">原価(仕切値) *</th>
                       <th className="border border-gray-300 p-2 w-16">消費税率 *</th>
-                      <th className="border border-gray-300 p-2 w-20">発行区分 *</th>
                       <th className="border border-gray-300 p-2 w-24">メーカー連絡メモ</th>
                       <th className="border border-gray-300 p-2 w-20">LOT番号</th>
                       <th className="border border-gray-300 p-2 w-24">LOT有効期限</th>
@@ -389,14 +387,6 @@ export default function InventorySecuringPage() {
                   <tbody>
                     {orderDetails.map((detail, index) => (
                       <tr key={index}>
-                        <td className="border border-gray-300 p-1">
-                          <Input
-                            value={detail.productCode}
-                            onChange={(e) => updateOrderDetail(index, "productCode", e.target.value)}
-                            className="w-full h-6 text-xs"
-                            disabled
-                          />
-                        </td>
                         <td className="border border-gray-300 p-1">
                           <Input
                             value={detail.productName}
@@ -525,21 +515,6 @@ export default function InventorySecuringPage() {
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
-                          <Select
-                            value={detail.issueCategory}
-                            onValueChange={(value) => updateOrderDetail(index, "issueCategory", value)}
-                          >
-                            <SelectTrigger className="w-full h-6 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="通常">通常</SelectItem>
-                              <SelectItem value="一伝(納品)">一伝(納品)</SelectItem>
-                              <SelectItem value="一伝(納品・請求)">一伝(納品・請求)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td className="border border-gray-300 p-1">
                           <Textarea
                             value={detail.makerMemo}
                             onChange={(e) => updateOrderDetail(index, "makerMemo", e.target.value)}
@@ -559,12 +534,12 @@ export default function InventorySecuringPage() {
                               <Button
                                 variant="outline"
                                 className={cn(
-                                  "w-full justify-start text-left font-normal text-xs h-6",
+                                  "w-full justify-start text-left font-normal h-6 text-xs px-1",
                                   !detail.lotExpiration && "text-muted-foreground",
                                 )}
                               >
                                 <CalendarIcon className="mr-1 h-3 w-3" />
-                                {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "選択"}
+                                {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "日付"}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
