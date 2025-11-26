@@ -504,15 +504,18 @@ export default function InventorySecuringPage() {
                           />
                         </td>
                         <td className="border border-gray-300 p-1">
-                          <Input
-                            value={detail.taxRate}
-                            onChange={(e) =>
-                              updateOrderDetail(index, "taxRate", Number.parseFloat(e.target.value) || 0)
-                            }
-                            className="w-full h-6 text-xs"
-                            type="number"
-                            disabled
-                          />
+                          <Select
+                            value={detail.taxRate.toString()}
+                            onValueChange={(value) => updateOrderDetail(index, "taxRate", Number.parseInt(value))}
+                          >
+                            <SelectTrigger className="w-full h-6 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="10">10%</SelectItem>
+                              <SelectItem value="8">8%</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="border border-gray-300 p-1">
                           <Textarea
@@ -534,12 +537,12 @@ export default function InventorySecuringPage() {
                               <Button
                                 variant="outline"
                                 className={cn(
-                                  "w-full justify-start text-left font-normal h-6 text-xs px-1",
+                                  "w-full justify-start text-left font-normal h-6 text-xs p-1",
                                   !detail.lotExpiration && "text-muted-foreground",
                                 )}
                               >
                                 <CalendarIcon className="mr-1 h-3 w-3" />
-                                {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "日付"}
+                                {detail.lotExpiration ? format(detail.lotExpiration, "yyyy/MM/dd") : "選択"}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
