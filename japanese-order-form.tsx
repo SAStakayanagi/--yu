@@ -49,6 +49,7 @@ export default function JapaneseOrderForm() {
         orderNumber: "",
         endUser: "●●大学",
         makerCode: "63-6334-36-30",
+        supplierUniqueCode: "1234",
         productName: "分析天びん 320g",
         specification: "ML304T/00",
         model: "ML304T/00",
@@ -67,6 +68,7 @@ export default function JapaneseOrderForm() {
         orderNumber: "",
         endUser: "△△研究所",
         makerCode: "12-3456-78-90",
+        supplierUniqueCode: "5678",
         productName: "pHメーター",
         specification: "PH-200",
         model: "PH-200",
@@ -85,6 +87,7 @@ export default function JapaneseOrderForm() {
         orderNumber: "",
         endUser: "□□病院",
         makerCode: "98-7654-32-10",
+        supplierUniqueCode: "9012",
         productName: "遠心分離機",
         specification: "CEN-1000",
         model: "CEN-1000",
@@ -103,6 +106,7 @@ export default function JapaneseOrderForm() {
         orderNumber: "",
         endUser: "☆☆製薬",
         makerCode: "45-6789-01-23",
+        supplierUniqueCode: "3456",
         productName: "試薬A",
         specification: "GR-100",
         model: "GR-100",
@@ -171,7 +175,12 @@ export default function JapaneseOrderForm() {
 
   // Add this useEffect after the state declarations
   useEffect(() => {
-    setFilteredData(tableData)
+    const sortedData = [...tableData].sort((a, b) => {
+      const codeA = a.supplierUniqueCode || ""
+      const codeB = b.supplierUniqueCode || ""
+      return codeA.localeCompare(codeB)
+    })
+    setFilteredData(sortedData)
   }, [tableData])
 
   const handleSearch = (searchParams: any) => {
@@ -195,6 +204,12 @@ export default function JapaneseOrderForm() {
     if (!searchParams.showDeletedOrders) {
       filtered = filtered.filter((item) => !deletedOrders.has(item.orderNumber))
     }
+
+    filtered.sort((a, b) => {
+      const codeA = a.supplierUniqueCode || ""
+      const codeB = b.supplierUniqueCode || ""
+      return codeA.localeCompare(codeB)
+    })
 
     setFilteredData(filtered)
     console.log(`検索結果: ${filtered.length}件`)
@@ -472,6 +487,16 @@ export default function JapaneseOrderForm() {
     }
   }
 
+  const handleDetailRemarksChange = (orderNumber: string, detailIndex: number, value: string) => {
+    const updatedTableData = [...tableData]
+    const orderIndex = updatedTableData.findIndex((item) => item.orderNumber === orderNumber)
+    if (orderIndex !== -1 && updatedTableData[orderIndex].details[detailIndex]) {
+      updatedTableData[orderIndex].details[detailIndex].detailRemarks = value
+      setTableData(updatedTableData)
+      setFilteredData(updatedTableData)
+    }
+  }
+
   return (
     <div className="flex flex-col flex-grow pb-20" style={{ backgroundColor: "#FAF5E9" }}>
       <Card className="w-full flex-grow">
@@ -526,16 +551,28 @@ export default function JapaneseOrderForm() {
                       発注日
                     </th>
                     <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      受注番号
+                    </th>
+                    <th
                       className="border border-gray-400 px-1 py-0.5 w-20 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
-                      仕入先コード
+                      受注行番号
                     </th>
                     <th
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
-                      仕入先名
+                      メーカー商品コード
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      仕入先独自コード
                     </th>
                     <th
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
@@ -547,19 +584,55 @@ export default function JapaneseOrderForm() {
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
-                      発注金額(税抜)
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      消費税額
+                      仕入先名
                     </th>
                     <th
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
-                      発注金額(税込)
+                      得意先名
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-32 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      JD統一コード
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-32 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      商品名
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      規格
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      容量
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      数量
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      仕入単価(税抜)
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      発注金額(税抜)
                     </th>
                     <th
                       className="border border-gray-400 px-1 py-0.5 w-20 text-black"
@@ -574,58 +647,16 @@ export default function JapaneseOrderForm() {
                       直送区分
                     </th>
                     <th
-                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      受注番号
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      受注行番号
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      得意先名
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      商品コード
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-32 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      商品名
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      数量
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-20 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      仕入金額
-                    </th>
-                    <th
-                      className="border border-gray-400 px-1 py-0.5 w-16 text-black"
-                      style={{ backgroundColor: "#FAF5E9" }}
-                    >
-                      発行区分
-                    </th>
-                    <th
                       className="border border-gray-400 px-1 py-0.5 w-24 text-black"
                       style={{ backgroundColor: "#FAF5E9" }}
                     >
                       発注書メモ欄
+                    </th>
+                    <th
+                      className="border border-gray-400 px-1 py-0.5 w-24 text-black"
+                      style={{ backgroundColor: "#FAF5E9" }}
+                    >
+                      明細備考
                     </th>
                   </tr>
                 </thead>
@@ -689,6 +720,7 @@ export default function JapaneseOrderForm() {
                         >
                           {isFirstDetail && (
                             <>
+                              {/* 登録 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-center text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -700,6 +732,7 @@ export default function JapaneseOrderForm() {
                                   onCheckedChange={(checked) => handleItemSelect(item.orderNumber)}
                                 />
                               </td>
+                              {/* 発注日 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -707,20 +740,47 @@ export default function JapaneseOrderForm() {
                               >
                                 {item.orderDate}
                               </td>
+                            </>
+                          )}
+                          {shouldRenderDetailFields ? (
+                            <>
+                              {/* 受注番号 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailCount}
+                                rowSpan={detailFieldRowspan}
                               >
-                                {item.supplierCode.substring(0, 4)}
+                                {`R${(index + 1).toString().padStart(6, "0")}`}
                               </td>
+                              {/* 受注行番号 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailCount}
+                                rowSpan={detailFieldRowspan}
                               >
-                                {item.supplierName}
+                                {detail ? detail.lineNumber || detailIndex + 1 : ""}
                               </td>
+                              {/* メーカー商品コード */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.makerCode : ""}
+                              </td>
+                              {/* 仕入先独自コード */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.supplierUniqueCode || "" : ""}
+                              </td>
+                            </>
+                          ) : null}
+                          {isFirstDetail && (
+                            <>
+                              {/* 商品コード */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -728,6 +788,79 @@ export default function JapaneseOrderForm() {
                               >
                                 {item.productCode}
                               </td>
+                              {/* 仕入先名 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailCount}
+                              >
+                                {item.supplierName}
+                              </td>
+                            </>
+                          )}
+                          {shouldRenderDetailFields ? (
+                            <>
+                              {/* 得意先名 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.endUser : ""}
+                              </td>
+                              {/* JD統一コード */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.jdUnifiedCode || "" : ""}
+                              </td>
+                              {/* 商品名 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.productName : ""}
+                              </td>
+                              {/* 規格 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.specification || "" : ""}
+                              </td>
+                              {/* 容量 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.quantity || "" : ""}
+                              </td>
+                              {/* 数量 */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? detail.orderQty : ""}
+                              </td>
+                              {/* 仕入単価(税抜) */}
+                              <td
+                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
+                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                              >
+                                {detail ? `¥${detail.unitPrice}` : ""}
+                              </td>
+                            </>
+                          ) : null}
+                          {isFirstDetail && (
+                            <>
+                              {/* 発注金額(税抜) */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-right text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -735,20 +868,7 @@ export default function JapaneseOrderForm() {
                               >
                                 ¥{item.orderAmountExcludingTax}
                               </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailCount}
-                              >
-                                ¥{item.consumptionTaxAmount}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailCount}
-                              >
-                                ¥{item.orderAmountIncludingTax}
-                              </td>
+                              {/* 発注区分 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -775,6 +895,7 @@ export default function JapaneseOrderForm() {
                                   </SelectContent>
                                 </Select>
                               </td>
+                              {/* 直送区分 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -786,60 +907,7 @@ export default function JapaneseOrderForm() {
                           )}
                           {shouldRenderDetailFields ? (
                             <>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {`R${(index + 1).toString().padStart(6, "0")}`}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                              >
-                                {detailIndex + 1}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {detail ? detail.endUser : ""}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {detail ? detail.makerCode : ""}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {detail ? detail.productName : ""}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {detail ? detail.orderQty : ""}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-right text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                                rowSpan={detailFieldRowspan}
-                              >
-                                {detail ? `¥${detail.unitPrice}` : ""}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                              >
-                                通常
-                              </td>
+                              {/* 発注書メモ欄 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
@@ -852,23 +920,23 @@ export default function JapaneseOrderForm() {
                                   className="h-6 text-xs border-gray-300 bg-white"
                                 />
                               </td>
-                            </>
-                          ) : (
-                            <>
+                              {/* 明細備考 */}
                               <td
                                 className="border border-gray-400 px-1 py-0.5 text-black"
                                 style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
+                                rowSpan={detailFieldRowspan}
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                {detailIndex + 1}
-                              </td>
-                              <td
-                                className="border border-gray-400 px-1 py-0.5 text-black"
-                                style={{ backgroundColor: isSelected ? "#E3F2FD" : "#FAF5E9" }}
-                              >
-                                通常
+                                <Input
+                                  value={detail ? detail.detailRemarks || "" : ""}
+                                  onChange={(e) =>
+                                    handleDetailRemarksChange(item.orderNumber, detailIndex, e.target.value)
+                                  }
+                                  className="h-6 text-xs border-gray-300 bg-white"
+                                />
                               </td>
                             </>
-                          )}
+                          ) : null}
                         </tr>
                       )
                     })
